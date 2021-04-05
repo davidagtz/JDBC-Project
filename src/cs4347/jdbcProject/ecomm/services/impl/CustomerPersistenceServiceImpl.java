@@ -87,36 +87,184 @@ public class CustomerPersistenceServiceImpl implements CustomerPersistenceServic
     @Override
     public Customer retrieve(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+        AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO creditCardDAO = new CreditCardDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	Customer cust = customerDAO.retrieve(connection, id);
+        	Address address = addressDAO.retrieveForCustomerID(connection, id);
+        	CreditCard creditCard = creditCardDAO.retrieveForCustomerID(connection, id);
+        	
+        	cust.setAddress(address);
+        	cust.setCreditCard(creditCard);
+        	
+        	connection.commit();
+        	return cust;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public int update(Customer customer) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+        AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO creditCardDAO = new CreditCardDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	addressDAO.deleteForCustomerID(connection, customer.getId());
+        	creditCardDAO.deleteForCustomerID(connection, customer.getId());
+        	
+        	Address newAddress = addressDAO.create(connection, customer.getAddress(), customer.getId());
+        	CreditCard newCreditCard = creditCardDAO.create(connection, customer.getCreditCard(), customer.getId());
+        	
+        	int rows = customerDAO.update(connection, customer);
+        	
+        	customer.setAddress(newAddress);
+        	customer.setCreditCard(newCreditCard);
+        	
+        	connection.commit();
+        	return rows;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public int delete(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+        AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO creditCardDAO = new CreditCardDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	addressDAO.deleteForCustomerID(connection, id);
+        	creditCardDAO.deleteForCustomerID(connection, id);
+        	
+        	int rows = customerDAO.delete(connection, id);
+        	
+        	connection.commit();
+        	return rows;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public List<Customer> retrieveByZipCode(String zipCode) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+        AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO creditCardDAO = new CreditCardDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	List<Customer> customers = customerDAO.retrieveByZipCode(connection, zipCode);
+        	
+        	for (Customer c : customers) {
+        		Address address = addressDAO.retrieveForCustomerID(connection, c.getId());
+            	CreditCard creditCard = creditCardDAO.retrieveForCustomerID(connection, c.getId());
+            	
+            	c.setAddress(address);
+            	c.setCreditCard(creditCard);
+        	}
+        	
+        	connection.commit();
+        	return customers;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public List<Customer> retrieveByDOB(Date startDate, Date endDate) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	CustomerDAO customerDAO = new CustomerDaoImpl();
+        AddressDAO addressDAO = new AddressDaoImpl();
+        CreditCardDAO creditCardDAO = new CreditCardDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	List<Customer> customers = customerDAO.retrieveByDOB(connection, startDate, endDate);
+        	
+        	for (Customer c : customers) {
+        		Address address = addressDAO.retrieveForCustomerID(connection, c.getId());
+            	CreditCard creditCard = creditCardDAO.retrieveForCustomerID(connection, c.getId());
+            	
+            	c.setAddress(address);
+            	c.setCreditCard(creditCard);
+        	}
+        	
+        	connection.commit();
+        	return customers;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     private DataSource dataSource;
