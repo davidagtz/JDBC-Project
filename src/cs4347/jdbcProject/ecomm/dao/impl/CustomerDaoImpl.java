@@ -30,6 +30,12 @@ public class CustomerDaoImpl implements CustomerDAO
     private static final String insertSQL = 
             "INSERT INTO customer (firstName, lastName, dob, gender, email) VALUES (?, ?, ?, ?, ?);";
     
+    private static final String updateSQL =
+    		"UPDATE customer SET firstName = ?, lastName = ?, dob = ?, gender = ?, email = ? WHERE id = ?";
+    
+    private static final String deleteSQL =
+    		"DELETE FROM customer WHERE id = ?";
+    
     private static final String retrieveSQL =
     		"SELECT c.* FROM customer c WHERE id = ?";
     
@@ -82,7 +88,7 @@ public class CustomerDaoImpl implements CustomerDAO
         	ResultSet rs = ps.executeQuery();
         	
         	if(rs.next()) {
-        		return fillCustomerFromResultSet(rs);
+        		return fillFromResultSet(rs);
         	} else {
         		return null;
         	}
@@ -97,15 +103,43 @@ public class CustomerDaoImpl implements CustomerDAO
     @Override
     public int update(Connection connection, Customer customer) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	if (customer.getId() == null) {
+            throw new DAOException("Trying to update Customer with NULL ID");
+        }
+
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(updateSQL);
+            ps.setString(1, customer.getFirstName());
+            ps.setString(2, customer.getLastName());
+            ps.setDate(3, customer.getDob());
+            ps.setString(4, String.valueOf(customer.getGender()));
+            ps.setString(5, customer.getEmail());
+            ps.setLong(6, customer.getId());
+            return ps.executeUpdate();
+
+        }
+        finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
     }
 
     @Override
     public int delete(Connection connection, Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(deleteSQL);
+            ps.setLong(1, id);
+            return ps.executeUpdate();
+        }
+        finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
     }
 
     @Override
@@ -121,7 +155,7 @@ public class CustomerDaoImpl implements CustomerDAO
         	ResultSet rs = ps.executeQuery();
         	
         	while(rs.next()) {
-        		Customer customer = fillCustomerFromResultSet(rs);
+        		Customer customer = fillFromResultSet(rs);
         		results.add(customer);
         	}
         	
@@ -148,7 +182,7 @@ public class CustomerDaoImpl implements CustomerDAO
         	ResultSet rs = ps.executeQuery();
         	
         	while(rs.next()) {
-        		Customer customer = fillCustomerFromResultSet(rs);
+        		Customer customer = fillFromResultSet(rs);
         		results.add(customer);
         	}
         	
@@ -161,7 +195,7 @@ public class CustomerDaoImpl implements CustomerDAO
         }
     }
     
-    private Customer fillCustomerFromResultSet(ResultSet rs) throws SQLException
+    private Customer fillFromResultSet(ResultSet rs) throws SQLException
     {
     	Customer customer = new Customer();
     	customer.setId((long) rs.getInt("c.id"));
