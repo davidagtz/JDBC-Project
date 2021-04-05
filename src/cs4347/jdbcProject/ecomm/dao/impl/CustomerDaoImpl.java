@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import cs4347.jdbcProject.ecomm.dao.CustomerDAO;
@@ -27,7 +28,16 @@ import cs4347.jdbcProject.ecomm.util.DAOException;
 public class CustomerDaoImpl implements CustomerDAO
 {
     private static final String insertSQL = 
-            "INSERT INTO customer (first_name, last_name, dob, gender, email) VALUES (?, ?, ?, ?, ?);";
+            "INSERT INTO customer (firstName, lastName, dob, gender, email) VALUES (?, ?, ?, ?, ?);";
+    
+    private static final String retrieveSQL =
+    		"SELECT c.* FROM customer c WHERE id = ?";
+    
+    private static final String retrieveByZipCodeSQL =
+    		"SELECT c.* FROM customer c, address a WHERE c.id = a.customer_id AND a.zipcode = ?";
+    
+    private static final String retrieveByDOBSQL =
+    		"SELECT c.* FROM customer c WHERE c.dob BETWEEN ? AND ?";
 
     @Override
     public Customer create(Connection connection, Customer customer) throws SQLException, DAOException
@@ -59,12 +69,29 @@ public class CustomerDaoImpl implements CustomerDAO
             }
         }
     }
+   
 
     @Override
     public Customer retrieve(Connection connection, Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+        PreparedStatement ps = null;
+        try {
+        	ps = connection.prepareStatement(retrieveSQL);
+        	ps.setLong(1, id);
+        	
+        	ResultSet rs = ps.executeQuery();
+        	
+        	if(rs.next()) {
+        		return fillCustomerFromResultSet(rs);
+        	} else {
+        		return null;
+        	}
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+        		ps.close();
+        	}
+        }
     }
 
     @Override
@@ -84,15 +111,67 @@ public class CustomerDaoImpl implements CustomerDAO
     @Override
     public List<Customer> retrieveByZipCode(Connection connection, String zipCode) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	PreparedStatement ps = null;
+    	List<Customer> results = new ArrayList<Customer>();
+    	
+        try {
+        	ps = connection.prepareStatement(retrieveByZipCodeSQL);
+        	ps.setString(1, zipCode);
+        	
+        	ResultSet rs = ps.executeQuery();
+        	
+        	while(rs.next()) {
+        		Customer customer = fillCustomerFromResultSet(rs);
+        		results.add(customer);
+        	}
+        	
+        	return results;
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+        		ps.close();
+        	}
+        }
     }
 
     @Override
     public List<Customer> retrieveByDOB(Connection connection, Date startDate, Date endDate) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	PreparedStatement ps = null;
+    	List<Customer> results = new ArrayList<Customer>();
+    	
+        try {
+        	ps = connection.prepareStatement(retrieveByDOBSQL);
+        	ps.setDate(1, startDate);
+        	ps.setDate(2, endDate);
+        	
+        	ResultSet rs = ps.executeQuery();
+        	
+        	while(rs.next()) {
+        		Customer customer = fillCustomerFromResultSet(rs);
+        		results.add(customer);
+        	}
+        	
+        	return results;
+        }
+        finally {
+        	if (ps != null && !ps.isClosed()) {
+        		ps.close();
+        	}
+        }
+    }
+    
+    private Customer fillCustomerFromResultSet(ResultSet rs) throws SQLException
+    {
+    	Customer customer = new Customer();
+    	customer.setId((long) rs.getInt("c.id"));
+    	customer.setFirstName(rs.getString("c.firstName"));
+    	customer.setLastName(rs.getString("c.lastName"));
+    	customer.setGender(rs.getString("c.gender").charAt(0));
+    	customer.setDob(rs.getDate("c.dob"));
+    	customer.setEmail(rs.getString("c.email"));
+    	
+    	return customer;
     }
 	
 }
