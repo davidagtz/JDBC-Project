@@ -12,11 +12,14 @@
 
 package cs4347.jdbcProject.ecomm.services.impl;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import cs4347.jdbcProject.ecomm.dao.ProductDAO;
+import cs4347.jdbcProject.ecomm.dao.impl.ProductDaoImpl;
 import cs4347.jdbcProject.ecomm.entity.Product;
 import cs4347.jdbcProject.ecomm.services.ProductPersistenceService;
 import cs4347.jdbcProject.ecomm.util.DAOException;
@@ -26,43 +29,170 @@ public class ProductPersistenceServiceImpl implements ProductPersistenceService
 	@Override
     public Product create(Product product) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+		ProductDAO productDAO = new ProductDaoImpl();
+
+        Connection connection = dataSource.getConnection();
+        try {
+            connection.setAutoCommit(false);  // Starts new Transaction on Connection
+            Product prod = productDAO.create(connection, product);
+            connection.commit();
+            return prod;
+        }
+        catch (Exception ex) {
+            connection.rollback();
+            throw ex;
+        }
+        finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public Product retrieve(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	ProductDAO productDAO = new ProductDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	Product prod = productDAO.retrieve(connection, id);
+        	connection.commit();
+        	return prod;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public int update(Product product) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	ProductDAO productDAO = new ProductDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	
+        	int rows = productDAO.update(connection, product);
+        	
+        	connection.commit();
+        	return rows;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public int delete(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	ProductDAO productDAO = new ProductDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	
+        	int rows = productDAO.delete(connection, id);
+        	
+        	connection.commit();
+        	return rows;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public Product retrieveByUPC(String upc) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	ProductDAO productDAO = new ProductDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	
+        	Product res = productDAO.retrieveByUPC(connection, upc);
+        	
+        	connection.commit();
+        	return res;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     @Override
     public List<Product> retrieveByCategory(int category) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	ProductDAO productDAO = new ProductDaoImpl();
+        
+        Connection connection = dataSource.getConnection();
+        
+        try {
+        	connection.setAutoCommit(false);
+        	
+        	List<Product> res = productDAO.retrieveByCategory(connection, category);
+        	
+        	connection.commit();
+        	return res;
+        }
+        catch (Exception ex) {
+        	connection.rollback();
+        	throw ex;
+        }
+        finally {
+        	if (connection != null) {
+                connection.setAutoCommit(true);
+            }
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        }
     }
 
     private DataSource dataSource;
