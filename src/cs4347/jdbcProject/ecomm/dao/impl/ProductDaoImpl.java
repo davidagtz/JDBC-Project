@@ -34,40 +34,40 @@ import cs4347.jdbcProject.ecomm.util.DAOException;
 
 public class ProductDaoImpl implements ProductDAO
 {
-    private static final String insertSQL = 
-            "INSERT INTO product (prodName, prodDescription, prodCategory, prodUPC) VALUES (?, ?, ?, ?);";
-    
-    private static final String updateSQL =
-    		"UPDATE product SET prodName = ?, prodDescription = ?, prodCategory = ?, prodUPC = ? WHERE id = ?";
-    
-    private static final String deleteSQL =
-    		"DELETE FROM product WHERE id = ?";
-    
-    private static final String retrieveSQL =
-    		"SELECT * FROM product WHERE id = ?";
-    
-    private static final String retrieveByCategorySQL =
-    		"SELECT * FROM product WHERE prodCategory = ?";
-    
-    private static final String retrieveByProdUPCSQL =
-    		"SELECT * FROM product WHERE prodUPC = ?";
 //    private static final String insertSQL = 
-//            "INSERT INTO PRODUCT (prod_name, prod_description, prod_category, prod_upc) VALUES (?, ?, ?, ?);";
+//            "INSERT INTO product (prodName, prodDescription, prodCategory, prodUPC) VALUES (?, ?, ?, ?);";
 //    
 //    private static final String updateSQL =
-//    		"UPDATE PRODUCT SET prod_name = ?, prod_description = ?, prod_category = ?, prod_upc = ? WHERE id = ?";
+//    		"UPDATE product SET prodName = ?, prodDescription = ?, prodCategory = ?, prodUPC = ? WHERE id = ?";
 //    
 //    private static final String deleteSQL =
-//    		"DELETE FROM PRODUCT WHERE id = ?";
+//    		"DELETE FROM product WHERE id = ?";
 //    
 //    private static final String retrieveSQL =
-//    		"SELECT * FROM PRODUCT WHERE id = ?";
+//    		"SELECT * FROM product WHERE id = ?";
 //    
 //    private static final String retrieveByCategorySQL =
-//    		"SELECT * FROM PRODUCT WHERE prod_category = ?";
+//    		"SELECT * FROM product WHERE prodCategory = ?";
 //    
 //    private static final String retrieveByProdUPCSQL =
-//    		"SELECT * FROM PRODUCT WHERE prod_upc = ?";
+//    		"SELECT * FROM product WHERE prodUPC = ?";
+    private static final String insertSQL = 
+            "INSERT INTO PRODUCT (prod_name, prod_description, prod_category, prod_upc) VALUES (?, ?, ?, ?);";
+    
+    private static final String updateSQL =
+    		"UPDATE PRODUCT SET prod_name = ?, prod_description = ?, prod_category = ?, prod_upc = ? WHERE id = ?";
+    
+    private static final String deleteSQL =
+    		"DELETE FROM PRODUCT WHERE id = ?";
+    
+    private static final String retrieveSQL =
+    		"SELECT * FROM PRODUCT WHERE id = ?";
+    
+    private static final String retrieveByCategorySQL =
+    		"SELECT * FROM PRODUCT WHERE prod_category = ?";
+    
+    private static final String retrieveByProdUPCSQL =
+    		"SELECT * FROM PRODUCT WHERE prod_upc = ?";
 
     @Override
     public Product create(Connection connection, Product product) throws SQLException, DAOException
@@ -224,16 +224,16 @@ public class ProductDaoImpl implements ProductDAO
     private Product fillFromResultSet(ResultSet rs) throws SQLException
     {
     	Product product = new Product();
-//    	product.setId((long) rs.getInt("id"));
-//    	product.setProdName(rs.getString("prodName"));
-//    	product.setProdDescription(rs.getString("prodDescription"));
-//    	product.setProdCategory(rs.getInt("prodCategory"));
-//    	product.setProdUPC(rs.getString("prodUPC"));
     	product.setId((long) rs.getInt("id"));
-    	product.setProdName(rs.getString("prod_name"));
-    	product.setProdDescription(rs.getString("prod_description"));
-    	product.setProdCategory(rs.getInt("prod_category"));
-    	product.setProdUPC(rs.getString("prod_upc"));
+    	product.setProdName(rs.getString("prodName"));
+    	product.setProdDescription(rs.getString("prodDescription"));
+    	product.setProdCategory(rs.getInt("prodCategory"));
+    	product.setProdUPC(rs.getString("prodUPC"));
+//    	product.setId((long) rs.getInt("id"));
+//    	product.setProdName(rs.getString("prod_name"));
+//    	product.setProdDescription(rs.getString("prod_description"));
+//    	product.setProdCategory(rs.getInt("prod_category"));
+//    	product.setProdUPC(rs.getString("prod_upc"));
     	return product;
     }
 }
