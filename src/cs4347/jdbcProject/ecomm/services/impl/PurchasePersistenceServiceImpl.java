@@ -12,11 +12,15 @@
 
 package cs4347.jdbcProject.ecomm.services.impl;
 
+
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import cs4347.jdbcProject.ecomm.dao.PurchaseDAO;
+import cs4347.jdbcProject.ecomm.dao.impl.PurchaseDaoImpl;
 import cs4347.jdbcProject.ecomm.entity.Purchase;
 import cs4347.jdbcProject.ecomm.services.PurchasePersistenceService;
 import cs4347.jdbcProject.ecomm.services.PurchaseSummary;
@@ -27,50 +31,139 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 	@Override
     public Purchase create(Purchase purchase) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+        if(purchase.getId() != null) {
+        	throw new DAOException("Error: pruchase id not null");
+        }
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		Purchase pur = null;
+		try {
+			pur = p.create(connection, purchase);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return pur;
+		}
     }
 
     @Override
     public Purchase retrieve(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	if(id == null) {
+        	throw new DAOException("Error: pruchase id not null");
+        }
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		Purchase pur = null;
+		try {
+			pur = p.retrieve(connection, id);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return pur;
+		}
     }
 
     @Override
     public int update(Purchase purchase) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	if(purchase == null) {
+        	throw new DAOException("Error: pruchase id not null");
+        }
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		int amount = 0;
+		try {
+			amount = p.update(connection, purchase);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return amount;
+		}
     }
 
     @Override
     public int delete(Long id) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	if(id == null) {
+        	throw new DAOException("Error: pruchase id not null");
+        }
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		int amount = 0;
+		try {
+			amount = p.delete(connection, id);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return amount;
+		}
     }
 
     @Override
     public List<Purchase> retrieveForCustomerID(Long customerID) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		List<Purchase> list = null;
+		try {
+			list = p.retrieveForCustomerID(connection, customerID);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return list;
+		}
     }
 
     @Override
     public PurchaseSummary retrievePurchaseSummary(Long customerID) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		PurchaseSummary ps = null;
+		try {
+			ps = p.retrievePurchaseSummary(connection, customerID);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return ps;
+		}
     }
 
     @Override
     public List<Purchase> retrieveForProductID(Long productID) throws SQLException, DAOException
     {
-        // TODO Auto-generated method stub
-        return null;
+		Connection connection = dataSource.getConnection();
+		PurchaseDAO p = new PurchaseDaoImpl();
+		connection.setAutoCommit(false);
+		List<Purchase> list = null;
+		try {
+			list = p.retrieveForProductID(connection, productID);
+			connection.commit();
+		}
+		finally {
+			connection.setAutoCommit(true);
+			connection.close();
+			return list;
+		}
     }
 
     private DataSource dataSource;
