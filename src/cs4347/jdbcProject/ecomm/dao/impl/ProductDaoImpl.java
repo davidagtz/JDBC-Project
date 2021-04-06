@@ -34,40 +34,40 @@ import cs4347.jdbcProject.ecomm.util.DAOException;
 
 public class ProductDaoImpl implements ProductDAO
 {
-//    private static final String insertSQL = 
-//            "INSERT INTO product (prodName, prodDescription, prodCategory, prodUPC) VALUES (?, ?, ?, ?);";
-//    
-//    private static final String updateSQL =
-//    		"UPDATE product SET prodName = ?, prodDescription = ?, prodCategory = ?, prodUPC = ? WHERE id = ?";
-//    
-//    private static final String deleteSQL =
-//    		"DELETE FROM product WHERE id = ?";
-//    
-//    private static final String retrieveSQL =
-//    		"SELECT * FROM product WHERE id = ?";
-//    
-//    private static final String retrieveByCategorySQL =
-//    		"SELECT * FROM product WHERE prodCategory = ?";
-//    
-//    private static final String retrieveByProdUPCSQL =
-//    		"SELECT * FROM product WHERE prodUPC = ?";
     private static final String insertSQL = 
-            "INSERT INTO PRODUCT (prod_name, prod_description, prod_category, prod_upc) VALUES (?, ?, ?, ?);";
+            "INSERT INTO product (prodName, prodDescription, prodCategory, prodUPC) VALUES (?, ?, ?, ?);";
     
     private static final String updateSQL =
-    		"UPDATE PRODUCT SET prod_name = ?, prod_description = ?, prod_category = ?, prod_upc = ? WHERE id = ?";
+    		"UPDATE product SET prodName = ?, prodDescription = ?, prodCategory = ?, prodUPC = ? WHERE id = ?";
     
     private static final String deleteSQL =
-    		"DELETE FROM PRODUCT WHERE id = ?";
+    		"DELETE FROM product WHERE id = ?";
     
     private static final String retrieveSQL =
-    		"SELECT * FROM PRODUCT WHERE id = ?";
+    		"SELECT * FROM product WHERE id = ?";
     
     private static final String retrieveByCategorySQL =
-    		"SELECT * FROM PRODUCT WHERE prod_category = ?";
+    		"SELECT * FROM product WHERE prodCategory = ?";
     
     private static final String retrieveByProdUPCSQL =
-    		"SELECT * FROM PRODUCT WHERE prod_upc = ?";
+    		"SELECT * FROM product WHERE prodUPC = ?";
+//    private static final String insertSQL = 
+//            "INSERT INTO PRODUCT (prod_name, prod_description, prod_category, prod_upc) VALUES (?, ?, ?, ?);";
+//    
+//    private static final String updateSQL =
+//    		"UPDATE PRODUCT SET prod_name = ?, prod_description = ?, prod_category = ?, prod_upc = ? WHERE id = ?";
+//    
+//    private static final String deleteSQL =
+//    		"DELETE FROM PRODUCT WHERE id = ?";
+//    
+//    private static final String retrieveSQL =
+//    		"SELECT * FROM PRODUCT WHERE id = ?";
+//    
+//    private static final String retrieveByCategorySQL =
+//    		"SELECT * FROM PRODUCT WHERE prod_category = ?";
+//    
+//    private static final String retrieveByProdUPCSQL =
+//    		"SELECT * FROM PRODUCT WHERE prod_upc = ?";
 
     @Override
     public Product create(Connection connection, Product product) throws SQLException, DAOException
