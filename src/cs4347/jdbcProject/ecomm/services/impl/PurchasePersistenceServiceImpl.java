@@ -41,11 +41,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			pur = p.create(connection, purchase);
 			connection.commit();
+			return pur;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return pur;
 		}
     }
 
@@ -62,11 +62,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			pur = p.retrieve(connection, id);
 			connection.commit();
+			return pur;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return pur;
 		}
     }
 
@@ -83,11 +83,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			amount = p.update(connection, purchase);
 			connection.commit();
+			return amount;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return amount;
 		}
     }
 
@@ -104,11 +104,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			amount = p.delete(connection, id);
 			connection.commit();
+			return amount;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return amount;
 		}
     }
 
@@ -122,11 +122,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			list = p.retrieveForCustomerID(connection, customerID);
 			connection.commit();
+			return list;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return list;
 		}
     }
 
@@ -140,11 +140,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			ps = p.retrievePurchaseSummary(connection, customerID);
 			connection.commit();
+			return ps;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return ps;
 		}
     }
 
@@ -158,11 +158,11 @@ public class PurchasePersistenceServiceImpl implements PurchasePersistenceServic
 		try {
 			list = p.retrieveForProductID(connection, productID);
 			connection.commit();
+			return list;
 		}
 		finally {
 			connection.setAutoCommit(true);
 			connection.close();
-			return list;
 		}
     }
 
