@@ -33,6 +33,21 @@ public class PurchaseDaoImpl implements PurchaseDAO {
 	private static final String retrieveSQL = 
 			"SELECT * FROM purchase WHERE id = ?";
 	
+	private static final String updateSQL = 
+			"Update purchase SET product_id = (?), customer_id = (?), purchasedate = (?), purchaseAmount = (?) where id= (?);";
+	
+	private static final String deleteSQL = 
+			"delete from purchase where id = (?);";
+	
+	private static final String retrieveForCustomerIDSQL = 
+			"select id,product_id, purchasedate, purchaseamount from purchase where customer_id= (?);";
+	
+	private static final String retrieveForProductIDSQL = 
+			"select id,customer_id, purchasedate, purchaseamount from purchase where product_id= (?);";
+	
+	private static final String retrievePurchaseSummarySQL = 
+			"SELECT MIN(purchaseamount) as min,MAX(purchaseamount) as max,AVG(purchaseamount) as average from purchase where customer_id= (?);";
+	
 	@Override
 	public Purchase create(Connection connection, Purchase purchase) throws SQLException, DAOException {
 		if (purchase.getId() != null) {
@@ -98,14 +113,23 @@ public class PurchaseDaoImpl implements PurchaseDAO {
 		if (purchase.getId() == null) {
 			throw new DAOException("error purchase id is null");
 		}
-		// connection.setAutoCommit(false);
-		Statement statement = connection.createStatement();
-		int upamount = statement.executeUpdate("Update purchase " + "SET product_id = " + purchase.getProductID()
-				+ ", customer_id = " + purchase.getCustomerID() + ", purchasedate = '" + purchase.getPurchaseDate()
-				+ "', purchaseAmount = " + purchase.getPurchaseAmount() + "where id=" + purchase.getId() + ";");
-		// connection.commit();
-		// connection.setAutoCommit(true);
-		return upamount;
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(updateSQL);
+			
+			ps.setLong(1, purchase.getProductID());
+			ps.setLong(2, purchase.getCustomerID());
+			ps.setDate(3, purchase.getPurchaseDate());
+			ps.setDouble(4, purchase.getPurchaseAmount());
+			ps.setLong(5, purchase.getId());
+			int amount = ps.executeUpdate();
+			return amount;
+			
+		} finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
 	}
 
 	@Override
@@ -113,12 +137,18 @@ public class PurchaseDaoImpl implements PurchaseDAO {
 		if (id == null) {
 			throw new DAOException("error id can't be null");
 		}
-		// connection.setAutoCommit(false);
-		Statement statement = connection.createStatement();
-		int delamount = statement.executeUpdate("delete from purchase where id = " + id + ";");
-		// connection.commit();
-		// connection.setAutoCommit(true);
-		return delamount;
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(deleteSQL);
+			ps.setLong(1, id);
+			int amount = ps.executeUpdate();
+			return amount;
+			
+		} finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
 	}
 
 	@Override
@@ -127,20 +157,28 @@ public class PurchaseDaoImpl implements PurchaseDAO {
 		if (customerID == null) {
 			throw new DAOException("error customer ID can't be null");
 		}
-		Statement statement = connection.createStatement();
-		ResultSet rs = statement.executeQuery("select id,product_id, purchasedate, purchaseamount  "
-				+ "from purchase where customer_id=" + customerID + ";");
-		List<Purchase> purchlist = new ArrayList<Purchase>();
-		while (rs.next()) {
-			Purchase purch = new Purchase();
-			purch.setCustomerID(customerID);
-			purch.setPurchaseDate(rs.getDate("purchasedate"));
-			purch.setPurchaseAmount(rs.getDouble("purchaseamount"));
-			purch.setProductID((long) rs.getInt("product_id"));
-			purch.setId((long) rs.getInt("id"));
-			purchlist.add(purch);
-		}
-		return purchlist;
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(retrieveForCustomerIDSQL);
+			ps.setLong(1, customerID);
+			ResultSet rs = ps.executeQuery();
+			List<Purchase> purchlist = new ArrayList<Purchase>();
+			while (rs.next()) {
+				Purchase purch = new Purchase();
+				purch.setCustomerID(customerID);
+				purch.setPurchaseDate(rs.getDate("purchasedate"));
+				purch.setPurchaseAmount(rs.getDouble("purchaseamount"));
+				purch.setProductID((long) rs.getInt("product_id"));
+				purch.setId((long) rs.getInt("id"));
+				purchlist.add(purch);
+			}
+			return purchlist;
+			
+		} finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
 	}
 
 	@Override
@@ -149,20 +187,28 @@ public class PurchaseDaoImpl implements PurchaseDAO {
 		if (productID == null) {
 			throw new DAOException("error product ID can't be null");
 		}
-		Statement statement = connection.createStatement();
-		ResultSet rs = statement.executeQuery("select id,customer_id, purchasedate, purchaseamount  "
-				+ "from purchase where product_id=" + productID + ";");
-		List<Purchase> purchlist = new ArrayList<Purchase>();
-		while (rs.next()) {
-			Purchase purch = new Purchase();
-			purch.setCustomerID((long) rs.getInt("customer_id"));
-			purch.setPurchaseDate(rs.getDate("purchasedate"));
-			purch.setPurchaseAmount(rs.getDouble("purchaseamount"));
-			purch.setProductID(productID);
-			purch.setId((long) rs.getInt("id"));
-			purchlist.add(purch);
-		}
-		return purchlist;
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(retrieveForProductIDSQL);
+			ps.setLong(1, productID);
+			ResultSet rs = ps.executeQuery();
+			List<Purchase> purchlist = new ArrayList<Purchase>();
+			while (rs.next()) {
+				Purchase purch = new Purchase();
+				purch.setCustomerID((long) rs.getInt("customer_id"));
+				purch.setPurchaseDate(rs.getDate("purchasedate"));
+				purch.setPurchaseAmount(rs.getDouble("purchaseamount"));
+				purch.setProductID(productID);
+				purch.setId((long) rs.getInt("id"));
+				purchlist.add(purch);
+			}
+			return purchlist;
+			
+		} finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
 	}
 
 	@Override
@@ -171,16 +217,22 @@ public class PurchaseDaoImpl implements PurchaseDAO {
 		if (customerID == null) {
 			throw new DAOException("error customer ID can't be null");
 		}
-		Statement statement = connection.createStatement();
-		ResultSet rs = statement.executeQuery(
-				"SELECT MIN(purchaseamount) as min,MAX(purchaseamount) as max,AVG(purchaseamount) as average"
-						+ " from purchase where customer_id=" + customerID + ";");
-		PurchaseSummary sum = new PurchaseSummary();
-		rs.next();
-		sum.minPurchase = (float) rs.getDouble("min");
-		sum.maxPurchase = (float) rs.getDouble("max");
-		sum.avgPurchase = (float) rs.getDouble("average");
-		return sum;
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(retrievePurchaseSummarySQL);
+			ps.setLong(1, customerID);
+			ResultSet rs = ps.executeQuery();
+			PurchaseSummary sum = new PurchaseSummary();
+			rs.next();
+			sum.minPurchase = (float) rs.getDouble("min");
+			sum.maxPurchase = (float) rs.getDouble("max");
+			sum.avgPurchase = (float) rs.getDouble("average");
+			return sum;
+		} finally {
+            if (ps != null && !ps.isClosed()) {
+                ps.close();
+            }
+        }
 	}
 
 }
